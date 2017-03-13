@@ -4,10 +4,12 @@ package pl.itse.optimistic.lock.runnable;
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.EntityTransaction;
+import javax.persistence.LockModeType;
 import javax.persistence.OptimisticLockException;
 import javax.persistence.Persistence;
 import javax.persistence.PersistenceException;
 
+import org.hibernate.LockMode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -32,6 +34,8 @@ public class EmailSenderARunnable implements Runnable {
 		try {
 
 			Email entity = em.find(Email.class, 1);
+			em.lock(entity, LockModeType.OPTIMISTIC_FORCE_INCREMENT);
+			
 			version = entity.getVersion();
 			System.out.println("Service A version: " + version);
 
